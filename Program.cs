@@ -4,7 +4,7 @@ using TaskTest.Context;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connection = builder.Configuration.GetConnectionString("Tarea");
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(context => context.UseNpgsql(connection));
 
 
@@ -27,6 +27,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Ejecutar migraciones al levantar la app
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 // Endpoint Test
 app.MapGet("/Tarea", async (ApplicationDbContext db) => await db.Tareas.ToListAsync());
