@@ -26,18 +26,5 @@ namespace TaskTest.Context
                 new Tarea { Id = 10, Descripcion = "Refactorizar código legacy", FechaTarea = new DateOnly(2025, 10, 10), Public = true, Estado = 1, Estimacion = 4 }
             );
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-                var connectionStrings = configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseNpgsql(connectionStrings);
-            }
-        }
     }
 }

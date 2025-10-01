@@ -11,18 +11,20 @@ namespace TaskTest.Controllers
     [ApiController]
     public class TareaController : ControllerBase
     {
+        private readonly ApplicationDbContext _context = new ApplicationDbContext();
+
         // GET: api/<TaskController>
         [HttpGet]
         public async Task<List<Tarea>> Get()
         {
-            return await new ApplicationDbContext().Tareas.ToListAsync();
+            return await _context.Tareas.ToListAsync();
         }
 
         // GET api/<TaskController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<Tarea> Get(int id)
         {
-            return "value";
+            return await _context.Tareas.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         // POST api/<TaskController>
