@@ -35,7 +35,7 @@ namespace TaskTest.Context
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-                var connectionStrings = configuration.GetConnectionString("Tarea");
+                var connectionStrings = configuration.GetConnectionString("DefaultConnection");
                 optionsBuilder.UseNpgsql(connectionStrings);
             }
         }
