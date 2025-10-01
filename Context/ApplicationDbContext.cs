@@ -26,5 +26,19 @@ namespace TaskTest.Context
                 new Tarea { Id = 10, Descripcion = "Refactorizar código legacy", FechaTarea = new DateOnly(2025, 10, 10), Public = true, Estado = 1, Estimacion = 4 }
             );
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Usar la variable de entorno si existe
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
+                if (!string.IsNullOrEmpty(connectionString))
+                    optionsBuilder.UseNpgsql(connectionString);
+                else
+                    throw new InvalidOperationException("Connection string no encontrada.");
+            }
+        }
     }
 }
