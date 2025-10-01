@@ -13,9 +13,9 @@ namespace TaskTest.Controllers
     {
         // GET: api/<TaskController>
         [HttpGet]
-        public async Task<IEnumerable<Tarea>> Get()
+        public async Task<List<Tarea>> Get()
         {
-            return new ApplicationDbContext().Tareas.AsEnumerable();
+            return await new ApplicationDbContext().Tareas.ToListAsync();
         }
 
         // GET api/<TaskController>/5
