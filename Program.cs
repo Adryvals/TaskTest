@@ -26,11 +26,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 //Ejecutar migraciones al levantar la app
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//    db.Database.Migrate();
+//}
 
 // Endpoint Test
 app.MapGet("/Tarea", async (ApplicationDbContext db) => await db.Tareas.ToListAsync());
