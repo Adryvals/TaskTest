@@ -9,10 +9,8 @@ namespace TaskTest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TareaController : ControllerBase
+    public class TareaController(ApplicationDbContext _context) : ControllerBase
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-
         // GET: api/<TaskController>
         [HttpGet]
         public async Task<List<Tarea>> Get()
@@ -22,27 +20,83 @@ namespace TaskTest.Controllers
 
         // GET api/<TaskController>/5
         [HttpGet("{id}")]
-        public async Task<Tarea> Get(int id)
+        public async Task<Tarea?> Get(int id)
         {
-            return await _context.Tareas.FirstOrDefaultAsync(x => x.Id == id);
+            var tarea = await _context.Tareas.FirstOrDefaultAsync(x => x.Id == id);
+            return tarea ?? null;
         }
 
         // POST api/<TaskController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Tarea tarea)
         {
+            try
+            {
+                await _context.AddAsync(tarea);
+                await _context.SaveChangesAsync();
+
+                return Created();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/<TaskController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Tarea tarea)
         {
+            try
+            {
+                var tareaItem = await _context.Tareas.FindAsync(id);
+                if (tareaItem != null)
+                {
+                    tareaItem.Estado = tarea.Estado;
+                    tareaItem.EstimacionId = tarea.EstimacionId;
+                    tareaItem.Completado = tarea.Completado;
+                    tareaItem.Descripcion = tarea.Descripcion;
+                    tareaItem.FechaTarea = tarea.FechaTarea;
+                    tareaItem.Visibilidad = tarea.Visibilidad;
+
+                    _context.Update(tareaItem);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+
+                return BadRequest();
+
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
-        // DELETE api/<TaskController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // PATCH api/<TaskController>/5
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Achieved(int id)
         {
+            try
+            {
+                var tarea = await _context.Tareas.FindAsync(id);
+                if (tarea != null)
+                {
+                    tarea.Completado = !tarea.Completado;
+
+                    _context.Update(tarea);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
     }
 }
